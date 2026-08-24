@@ -257,6 +257,7 @@
       btn.style.left = pad + Math.random() * (window.innerWidth - w - pad * 2) + "px";
       btn.style.top = pad + Math.random() * (window.innerHeight - h - pad * 2) + "px";
 
+      out.classList.add("snarkbox");
       out.textContent = ejekan[Math.min(dodges - 1, ejekan.length - 1)] + "  (gagal " + dodges + "×)";
 
       const grow = 1 + Math.min(dodges * 0.03, 0.15);
@@ -281,6 +282,7 @@
       if (!donasiDicoba) {
         donasiDicoba = true;
         btn.disabled = true;
+        out.classList.remove("snarkbox");
         out.textContent = "";
         barWrap.classList.add("show");
         let p = 0;
@@ -291,6 +293,7 @@
             clearInterval(t);
             setTimeout(() => {
               barWrap.classList.remove("show");
+              out.classList.remove("snarkbox");
               out.classList.add("error");
               out.textContent = "GAGAL (error 402: males). Fitur donasi memang nggak pernah dibuat. Tombol merah di atas tuh, masih nganggur.";
               btn.textContent = "Coba lagi (nggak akan berhasil)";
