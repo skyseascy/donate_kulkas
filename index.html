@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Donasi</title>
+  <title>Donasi (nggak jadi)</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,6 +16,7 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      overflow-x: hidden;
     }
 
     .card {
@@ -25,10 +26,26 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
     }
 
     .emoji { font-size: 56px; line-height: 1; }
+
+    img.meme {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 16px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #16a34a;
+      background: #dcfce7;
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
 
     h1 {
       font-size: clamp(28px, 8vw, 40px);
@@ -42,10 +59,18 @@
       line-height: 1.5;
     }
 
+    p.sub .snark {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.85em;
+      color: #a8a29e;
+      font-style: italic;
+    }
+
     a.btn {
       display: block;
       width: 100%;
-      margin-top: 8px;
+      margin-top: 4px;
       padding: 18px 24px;
       background: #ef4444;
       color: #fff;
@@ -54,29 +79,243 @@
       text-decoration: none;
       border-radius: 16px;
       box-shadow: 0 4px 0 #b91c1c;
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      transition: transform 0.25s ease, box-shadow 0.08s ease;
     }
 
     a.btn:active {
-      transform: translateY(3px);
+      transform: translateY(3px) scale(var(--grow, 1)) !important;
       box-shadow: 0 1px 0 #b91c1c;
     }
 
-    footer {
-      margin-top: 28px;
+    .btn-note {
       font-size: 12px;
       color: #a8a29e;
+      margin-top: -6px;
+    }
+
+    button.stubborn {
+      margin-top: 14px;
+      width: 100%;
+      padding: 16px 24px;
+      background: #fff;
+      border: 3px dashed #57534e;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      color: #262626;
+      cursor: pointer;
+      border-radius: 16px;
+      box-shadow: 0 3px 0 #d6d3d1;
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      z-index: 10;
+      touch-action: none;
+    }
+
+    button.stubborn.runaway {
+      position: fixed;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    button.stubborn:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    p.comeback {
+      font-size: 13px;
+      color: #78716c;
+      min-height: 3em;
       line-height: 1.5;
+    }
+
+    p.comeback.snarkbox {
+      font-size: 15px;
+      font-weight: 700;
+      color: #b45309;
+      background: #fef3c7;
+      border: 2px solid #fcd34d;
+      border-radius: 12px;
+      padding: 12px 16px;
+      width: 100%;
+    }
+
+    p.comeback.error {
+      font-size: 15px;
+      font-weight: 700;
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      padding: 12px 16px;
+      width: 100%;
+    }
+
+    .bar-wrap {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bar-wrap.show { display: flex; }
+
+    .bar-label {
+      font-size: 12px;
+      color: #78716c;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #e7e0d6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+      border-radius: 999px;
+      transition: width 0.2s linear;
     }
   </style>
 </head>
 <body>
   <main class="card">
+    <img class="meme" src="meme.gif" alt="" hidden
+         onload="this.hidden=false;document.querySelector('.emoji').hidden=true"
+         onerror="this.remove()">
     <div class="emoji">🙏</div>
+    <span class="badge">100% GRATIS · SESUAI BUDGET KAMU</span>
     <h1>Terima kasih mau donate.</h1>
-    <p class="sub">Tapi simpan uangmu. Mending subscribe aja.</p>
-    <a class="btn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
-    <footer>Halaman ini dibuat pakai AI dalam 1 prompt, sama kayak aplikasinya.</footer>
+    <p class="sub">
+      Tapi simpan uangmu. Mending subscribe aja.
+      <span class="snark">Iya, subscribe. Yang gratis itu loh. Modal jempol doang.</span>
+    </p>
+    <a class="btn" id="subBtn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
+    <p class="btn-note">*lebih murah dari es teh. Soalnya nol rupiah.</p>
+
+    <button class="stubborn" id="ngototBtn">💸 Tetap ngotot mau donate</button>
+
+    <div class="bar-wrap" id="barWrap">
+      <div class="bar-label"><span>Memproses donasi…</span><span id="barPct">0%</span></div>
+      <div class="bar"><div id="barFill"></div></div>
+    </div>
+
+    <p class="comeback" id="comeback"></p>
   </main>
+
+  <script>
+    const btn = document.getElementById("ngototBtn");
+    const sub = document.getElementById("subBtn");
+    const out = document.getElementById("comeback");
+    const barWrap = document.getElementById("barWrap");
+    const barFill = document.getElementById("barFill");
+    const barPct = document.getElementById("barPct");
+
+    const ejekan = [
+      "Loh, kok geser.",
+      "Eh licin, maaf.",
+      "Niat donasinya kuat, jarinya kurang cepat.",
+      "Tombol subscribe makin gede tuh. Kode alam.",
+      "Udah 5 kali. Nggak capek?",
+      "Refleksmu bagus. Sayang salah sasaran.",
+    ];
+
+    const jawaban = [
+      "Serius amat. Udah dibilang subscribe aja.",
+      "Uangmu lebih berguna buat beli kuota nonton video aku.",
+      "Oke, transfer ke rekening... eh nggak jadi. Subscribe.",
+      "Kamu gigih ya. Coba gigihnya dipakai buat klik tombol merah di atas.",
+      "Donasi: ditolak. Subscribe: diterima. Sekian.",
+      "Masih di sini? Tombolnya merah, gede, di atas. Masa nggak kelihatan.",
+      "Yaudah ini terakhir: S-U-B-S-C-R-I-B-E. Gratis. Klik. Makasih."
+    ];
+
+    let dodges = 0;
+    let surrendered = false;
+    let donasiDicoba = false;
+    let ke = 0;
+
+    function kabur(e) {
+      if (surrendered) return;
+      e.preventDefault();
+      dodges++;
+
+      if (dodges >= 7) {
+        nyerah();
+        return;
+      }
+
+      const pad = 12;
+      const w = btn.offsetWidth, h = btn.offsetHeight;
+      btn.style.width = w + "px";
+      btn.classList.add("runaway");
+      btn.style.left = pad + Math.random() * (window.innerWidth - w - pad * 2) + "px";
+      btn.style.top = pad + Math.random() * (window.innerHeight - h - pad * 2) + "px";
+
+      out.classList.add("snarkbox");
+      out.textContent = ejekan[Math.min(dodges - 1, ejekan.length - 1)] + "  (gagal " + dodges + "×)";
+
+      const grow = 1 + Math.min(dodges * 0.03, 0.15);
+      sub.style.setProperty("--grow", grow);
+      sub.style.transform = "scale(" + grow + ")";
+    }
+
+    function nyerah() {
+      surrendered = true;
+      btn.classList.remove("runaway");
+      btn.style.left = btn.style.top = btn.style.width = "";
+      btn.textContent = "Yaudah deh, klik. Puas?";
+      out.textContent = "Capek juga ternyata jadi tombol.";
+    }
+
+    btn.addEventListener("pointerenter", kabur);
+    btn.addEventListener("pointerdown", kabur);
+
+    btn.addEventListener("click", () => {
+      if (!surrendered) return;
+
+      if (!donasiDicoba) {
+        donasiDicoba = true;
+        btn.disabled = true;
+        out.classList.remove("snarkbox");
+        out.textContent = "";
+        barWrap.classList.add("show");
+        let p = 0;
+        const t = setInterval(() => {
+          p += Math.max(1, Math.round((99 - p) / 8));
+          if (p >= 99) {
+            p = 99;
+            clearInterval(t);
+            setTimeout(() => {
+              barWrap.classList.remove("show");
+              out.classList.remove("snarkbox");
+              out.classList.add("error");
+              out.textContent = "GAGAL (error 402: males). Fitur donasi memang nggak pernah dibuat. Tombol merah di atas tuh, masih nganggur.";
+              btn.textContent = "Coba lagi (nggak akan berhasil)";
+              btn.disabled = false;
+            }, 900);
+          }
+          barFill.style.width = p + "%";
+          barPct.textContent = p + "%";
+        }, 150);
+        return;
+      }
+
+      out.classList.remove("error");
+      out.classList.add("snarkbox");
+      out.textContent = jawaban[Math.min(ke, jawaban.length - 1)];
+      ke++;
+    });
+
+    const judulAsli = document.title;
+    document.addEventListener("visibilitychange", () => {
+      document.title = document.hidden ? "WOI BALIK. SUBSCRIBE DULU 😤" : judulAsli;
+    });
+  </script>
 </body>
 </html>
