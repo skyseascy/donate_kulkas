@@ -94,16 +94,18 @@
     }
 
     button.stubborn {
-      margin-top: 18px;
-      background: none;
-      border: none;
+      margin-top: 14px;
+      width: 100%;
+      padding: 16px 24px;
+      background: #fff;
+      border: 3px dashed #57534e;
       font: inherit;
-      font-size: 13px;
-      color: #a8a29e;
-      text-decoration: underline dotted;
+      font-size: 17px;
+      font-weight: 700;
+      color: #262626;
       cursor: pointer;
-      padding: 10px 14px;
-      border-radius: 10px;
+      border-radius: 16px;
+      box-shadow: 0 3px 0 #d6d3d1;
       transition: left 0.15s ease-out, top 0.15s ease-out;
       z-index: 10;
       touch-action: none;
@@ -111,8 +113,12 @@
 
     button.stubborn.runaway {
       position: fixed;
-      background: #f7f4ef;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    button.stubborn:disabled {
+      cursor: wait;
+      opacity: 0.7;
     }
 
     p.comeback {
@@ -170,7 +176,7 @@
     <a class="btn" id="subBtn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
     <p class="btn-note">*lebih murah dari es teh. Soalnya nol rupiah.</p>
 
-    <button class="stubborn" id="ngototBtn">Tetap ngotot mau donate?</button>
+    <button class="stubborn" id="ngototBtn">💸 Tetap ngotot mau donate</button>
 
     <div class="bar-wrap" id="barWrap">
       <div class="bar-label"><span>Memproses donasi…</span><span id="barPct">0%</span></div>
@@ -224,6 +230,7 @@
 
       const pad = 12;
       const w = btn.offsetWidth, h = btn.offsetHeight;
+      btn.style.width = w + "px";
       btn.classList.add("runaway");
       btn.style.left = pad + Math.random() * (window.innerWidth - w - pad * 2) + "px";
       btn.style.top = pad + Math.random() * (window.innerHeight - h - pad * 2) + "px";
@@ -238,7 +245,7 @@
     function nyerah() {
       surrendered = true;
       btn.classList.remove("runaway");
-      btn.style.left = btn.style.top = "";
+      btn.style.left = btn.style.top = btn.style.width = "";
       btn.textContent = "Yaudah deh, klik. Puas?";
       out.textContent = "Capek juga ternyata jadi tombol.";
     }
