@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p _site
           sed "s|%%LINK_CHANNEL%%|${LINK_CHANNEL:-#}|g" index.html > _site/index.html
+          cp meme.gif gorila.html gorila.png _site/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
