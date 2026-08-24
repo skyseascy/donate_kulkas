@@ -2,7 +2,7 @@ name: Deploy ke GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/fake-donation-page-4jmpz3]
   workflow_dispatch:
 
 permissions:
@@ -29,7 +29,7 @@ jobs:
           LINK_CHANNEL: ${{ vars.LINK_CHANNEL }}
         run: |
           mkdir -p _site
-          sed "s|%%LINK_CHANNEL%%|${LINK_CHANNEL}|g" index.html > _site/index.html
+          sed "s|%%LINK_CHANNEL%%|${LINK_CHANNEL:-#}|g" index.html > _site/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
