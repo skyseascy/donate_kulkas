@@ -16,6 +16,7 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      overflow-x: hidden;
     }
 
     .card {
@@ -78,11 +79,11 @@
       text-decoration: none;
       border-radius: 16px;
       box-shadow: 0 4px 0 #b91c1c;
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      transition: transform 0.25s ease, box-shadow 0.08s ease;
     }
 
     a.btn:active {
-      transform: translateY(3px);
+      transform: translateY(3px) scale(var(--grow, 1)) !important;
       box-shadow: 0 1px 0 #b91c1c;
     }
 
@@ -101,13 +102,56 @@
       color: #a8a29e;
       text-decoration: underline dotted;
       cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      z-index: 10;
+      touch-action: none;
+    }
+
+    button.stubborn.runaway {
+      position: fixed;
+      background: #f7f4ef;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
     }
 
     p.comeback {
       font-size: 13px;
       color: #78716c;
-      min-height: 1.5em;
+      min-height: 3em;
       line-height: 1.5;
+    }
+
+    .bar-wrap {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bar-wrap.show { display: flex; }
+
+    .bar-label {
+      font-size: 12px;
+      color: #78716c;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #e7e0d6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+      border-radius: 999px;
+      transition: width 0.2s linear;
     }
   </style>
 </head>
@@ -123,15 +167,37 @@
       Tapi simpan uangmu. Mending subscribe aja.
       <span class="snark">Iya, subscribe. Yang gratis itu loh. Modal jempol doang.</span>
     </p>
-    <a class="btn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
+    <a class="btn" id="subBtn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
     <p class="btn-note">*lebih murah dari es teh. Soalnya nol rupiah.</p>
-    <button class="stubborn" onclick="ngotot()">Tetap ngotot mau donate?</button>
+
+    <button class="stubborn" id="ngototBtn">Tetap ngotot mau donate?</button>
+
+    <div class="bar-wrap" id="barWrap">
+      <div class="bar-label"><span>Memproses donasi…</span><span id="barPct">0%</span></div>
+      <div class="bar"><div id="barFill"></div></div>
+    </div>
+
     <p class="comeback" id="comeback"></p>
   </main>
 
   <script>
+    const btn = document.getElementById("ngototBtn");
+    const sub = document.getElementById("subBtn");
+    const out = document.getElementById("comeback");
+    const barWrap = document.getElementById("barWrap");
+    const barFill = document.getElementById("barFill");
+    const barPct = document.getElementById("barPct");
+
+    const ejekan = [
+      "Loh, kok geser.",
+      "Eh licin, maaf.",
+      "Niat donasinya kuat, jarinya kurang cepat.",
+      "Tombol subscribe makin gede tuh. Kode alam.",
+      "Udah 5 kali. Nggak capek?",
+      "Refleksmu bagus. Sayang salah sasaran.",
+    ];
+
     const jawaban = [
-      "Nggak ada form-nya. Udah dihapus. Ikhlasin.",
       "Serius amat. Udah dibilang subscribe aja.",
       "Uangmu lebih berguna buat beli kuota nonton video aku.",
       "Oke, transfer ke rekening... eh nggak jadi. Subscribe.",
@@ -140,12 +206,81 @@
       "Masih di sini? Tombolnya merah, gede, di atas. Masa nggak kelihatan.",
       "Yaudah ini terakhir: S-U-B-S-C-R-I-B-E. Gratis. Klik. Makasih."
     ];
+
+    let dodges = 0;
+    let surrendered = false;
+    let donasiDicoba = false;
     let ke = 0;
-    function ngotot() {
-      document.getElementById("comeback").textContent =
-        jawaban[Math.min(ke, jawaban.length - 1)];
-      ke++;
+
+    function kabur(e) {
+      if (surrendered) return;
+      e.preventDefault();
+      dodges++;
+
+      if (dodges >= 7) {
+        nyerah();
+        return;
+      }
+
+      const pad = 12;
+      const w = btn.offsetWidth, h = btn.offsetHeight;
+      btn.classList.add("runaway");
+      btn.style.left = pad + Math.random() * (window.innerWidth - w - pad * 2) + "px";
+      btn.style.top = pad + Math.random() * (window.innerHeight - h - pad * 2) + "px";
+
+      out.textContent = ejekan[Math.min(dodges - 1, ejekan.length - 1)] + "  (gagal " + dodges + "×)";
+
+      const grow = 1 + Math.min(dodges * 0.03, 0.15);
+      sub.style.setProperty("--grow", grow);
+      sub.style.transform = "scale(" + grow + ")";
     }
+
+    function nyerah() {
+      surrendered = true;
+      btn.classList.remove("runaway");
+      btn.style.left = btn.style.top = "";
+      btn.textContent = "Yaudah deh, klik. Puas?";
+      out.textContent = "Capek juga ternyata jadi tombol.";
+    }
+
+    btn.addEventListener("pointerenter", kabur);
+    btn.addEventListener("pointerdown", kabur);
+
+    btn.addEventListener("click", () => {
+      if (!surrendered) return;
+
+      if (!donasiDicoba) {
+        donasiDicoba = true;
+        btn.disabled = true;
+        out.textContent = "";
+        barWrap.classList.add("show");
+        let p = 0;
+        const t = setInterval(() => {
+          p += Math.max(1, Math.round((99 - p) / 8));
+          if (p >= 99) {
+            p = 99;
+            clearInterval(t);
+            setTimeout(() => {
+              barWrap.classList.remove("show");
+              out.textContent = "GAGAL (error 402: males). Fitur donasi memang nggak pernah dibuat. Tombol merah di atas tuh, masih nganggur.";
+              btn.textContent = "Coba lagi (nggak akan berhasil)";
+              btn.disabled = false;
+            }, 900);
+          }
+          barFill.style.width = p + "%";
+          barPct.textContent = p + "%";
+        }, 150);
+        return;
+      }
+
+      out.textContent = jawaban[Math.min(ke, jawaban.length - 1)];
+      ke++;
+    });
+
+    const judulAsli = document.title;
+    document.addEventListener("visibilitychange", () => {
+      document.title = document.hidden ? "WOI BALIK. SUBSCRIBE DULU 😤" : judulAsli;
+    });
   </script>
 </body>
 </html>
