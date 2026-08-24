@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Donasi</title>
+  <title>Donasi (nggak jadi)</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -25,7 +25,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
     }
 
     .emoji { font-size: 56px; line-height: 1; }
@@ -34,7 +34,16 @@
       width: 100%;
       max-width: 280px;
       border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #16a34a;
+      background: #dcfce7;
+      padding: 6px 14px;
+      border-radius: 999px;
     }
 
     h1 {
@@ -49,10 +58,18 @@
       line-height: 1.5;
     }
 
+    p.sub .snark {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.85em;
+      color: #a8a29e;
+      font-style: italic;
+    }
+
     a.btn {
       display: block;
       width: 100%;
-      margin-top: 8px;
+      margin-top: 4px;
       padding: 18px 24px;
       background: #ef4444;
       color: #fff;
@@ -68,6 +85,30 @@
       transform: translateY(3px);
       box-shadow: 0 1px 0 #b91c1c;
     }
+
+    .btn-note {
+      font-size: 12px;
+      color: #a8a29e;
+      margin-top: -6px;
+    }
+
+    button.stubborn {
+      margin-top: 18px;
+      background: none;
+      border: none;
+      font: inherit;
+      font-size: 13px;
+      color: #a8a29e;
+      text-decoration: underline dotted;
+      cursor: pointer;
+    }
+
+    p.comeback {
+      font-size: 13px;
+      color: #78716c;
+      min-height: 1.5em;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -76,9 +117,35 @@
          onload="this.hidden=false;document.querySelector('.emoji').hidden=true"
          onerror="this.remove()">
     <div class="emoji">🙏</div>
+    <span class="badge">100% GRATIS · SESUAI BUDGET KAMU</span>
     <h1>Terima kasih mau donate.</h1>
-    <p class="sub">Tapi simpan uangmu. Mending subscribe aja.</p>
+    <p class="sub">
+      Tapi simpan uangmu. Mending subscribe aja.
+      <span class="snark">Iya, subscribe. Yang gratis itu loh. Modal jempol doang.</span>
+    </p>
     <a class="btn" href="%%LINK_CHANNEL%%">Oke, subscribe</a>
+    <p class="btn-note">*lebih murah dari es teh. Soalnya nol rupiah.</p>
+    <button class="stubborn" onclick="ngotot()">Tetap ngotot mau donate?</button>
+    <p class="comeback" id="comeback"></p>
   </main>
+
+  <script>
+    const jawaban = [
+      "Nggak ada form-nya. Udah dihapus. Ikhlasin.",
+      "Serius amat. Udah dibilang subscribe aja.",
+      "Uangmu lebih berguna buat beli kuota nonton video aku.",
+      "Oke, transfer ke rekening... eh nggak jadi. Subscribe.",
+      "Kamu gigih ya. Coba gigihnya dipakai buat klik tombol merah di atas.",
+      "Donasi: ditolak. Subscribe: diterima. Sekian.",
+      "Masih di sini? Tombolnya merah, gede, di atas. Masa nggak kelihatan.",
+      "Yaudah ini terakhir: S-U-B-S-C-R-I-B-E. Gratis. Klik. Makasih."
+    ];
+    let ke = 0;
+    function ngotot() {
+      document.getElementById("comeback").textContent =
+        jawaban[Math.min(ke, jawaban.length - 1)];
+      ke++;
+    }
+  </script>
 </body>
 </html>
