@@ -30,6 +30,13 @@
 
     .emoji { font-size: 56px; line-height: 1; }
 
+    img.meme {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
     h1 {
       font-size: clamp(28px, 8vw, 40px);
       line-height: 1.2;
@@ -72,6 +79,9 @@
 </head>
 <body>
   <main class="card">
+    <img class="meme" src="meme.gif" alt="" hidden
+         onload="this.hidden=false;document.querySelector('.emoji').hidden=true"
+         onerror="this.remove()">
     <div class="emoji">🙏</div>
     <h1>Terima kasih mau donate.</h1>
     <p class="sub">Tapi simpan uangmu. Mending subscribe aja.</p>
